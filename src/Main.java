@@ -24,8 +24,8 @@ public class Main {
     System.out.println(Arrays.toString(counterDES.encryptAndDecrypt(cypher, false)));
 
     Server keyDistCntr = new Server(353, 3, 2018);
-    Client alice = new Client(353, 3, 2018, "Alice");
-    Client bob = new Client(353, 3, 2018, "Bob");
+    Client alice = new Client(353, 3, 2018, "Alice", true);
+    Client bob = new Client(353, 3, 2018, "Bob", false);
 
     Thread server = keyDistCntr;
     server.start();

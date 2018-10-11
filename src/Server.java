@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Server extends Thread {
   private ServerSocket serverSocket;
-  private ArrayList<Pair<Integer,Integer>> clients;
+  private TreeMap<Integer,Integer> clients = new TreeMap<>();
   private DiffieHellman_Key_Exchange keyExchange;;
 
   public final String PUBLIC_KEY_COMMAND = "PublicKey";
@@ -46,7 +46,7 @@ public class Server extends Thread {
           int sessionKey = keyExchange.computeSessionKey( requestValue.getValue());
           String name = requestValue.getKey();
           System.out.println("Server has calculated session key with " + name + ": " + sessionKey);
-          clients.add(new Pair<>(name.hashCode()%255, sessionKey));
+          clients.put(name.hashCode()%255, sessionKey);
 
           System.out.println("Server is sending out server public key: " + keyExchange.getPublicKey());
           out.writeInt(keyExchange.getPublicKey());
@@ -55,6 +55,9 @@ public class Server extends Thread {
 
         }else if(request.getKey().compareTo(DISTRIBUTE_KEYS_COMMAND) == 0){
 
+//          Toy_DES_CounterVersion encrypter = new Toy_DES_CounterVersion();
+
+          System.out.println("Here!!!");
 
 
         }
