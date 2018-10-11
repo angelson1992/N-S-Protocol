@@ -8,7 +8,7 @@ import java.util.*;
 public class Server extends Thread {
   private ServerSocket serverSocket;
   private TreeMap<Integer,Integer> clients = new TreeMap<>();
-  private DiffieHellman_Key_Exchange keyExchange;;
+  private DiffieHellman_Key_Exchange keyExchange;
 
   public final String PUBLIC_KEY_COMMAND = "PublicKey";
   public final String DISTRIBUTE_KEYS_COMMAND = "DistributeKeys";
@@ -55,10 +55,23 @@ public class Server extends Thread {
 
         }else if(request.getKey().compareTo(DISTRIBUTE_KEYS_COMMAND) == 0){
 
-//          Toy_DES_CounterVersion encrypter = new Toy_DES_CounterVersion();
+          int initiatorNameHash = (int) request.getValue();
+          int recieverNameHash = ois.readInt();
+          int noice1 = ois.readInt()%255;
+          int key1 = clients.get(initiatorNameHash);
+          int key2 = clients.get(recieverNameHash);
+          int keyS = (key1 + key2) % 255;
+          System.out.println("KDC is sending Ks=" + keyS + ", IDb=" + recieverNameHash + ", N1=" + noice1 + " that is encrypted and Ks, IDa=" + initiatorNameHash + " double encrypted.");
 
-          System.out.println("Here!!!");
+          Toy_DES_CounterVersion key1Encrypter = new Toy_DES_CounterVersion(Integer.toString(key1, 2));
+          Toy_DES_CounterVersion key2Encrypter = new Toy_DES_CounterVersion(Integer.toString(key2, 2));
+          int[] key2Cypher = key2Encrypter.encryptAndDecrypt(new int[]{keyS, initiatorNameHash, noice1}, true);
+          int[] key1Cypher = key1Encrypter.encryptAndDecrypt(new int[]{keyS, recieverNameHash, noice1, key2Cypher[0], key2Cypher[1], key2Cypher[2]}, true);
 
+           for(int i = 0; i < key1Cypher.length; i++) {
+             oos.writeInt(key1Cypher[i]);
+             oos.flush();
+           }
 
         }
 
