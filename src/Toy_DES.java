@@ -20,13 +20,19 @@ class Toy_DES {
 
   Toy_DES(String keyParam){
 
+    setKey(keyParam);
+
+    //Sets up the subkeys
+    keySchedule();
+
+  }
+
+  public void setKey(String keyParam){
+
     //Inputs the string representation of the binary key into the BitSet key variable
     for(int i = 0; i < keyParam.length(); i++){
       if(keyParam.charAt(i) == '1') {key.set(i, true);} else {key.set(i, false);}
     }
-
-    //Sets up the subkeys
-    keySchedule();
 
   }
 
@@ -172,7 +178,7 @@ class Toy_DES {
 
   }
 
-  private List<BitSet> keySchedule(){
+  public List<BitSet> keySchedule(){
 
     if(verboseTest){System.out.println("The key scheduler was been called.\n");}
 
